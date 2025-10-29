@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Shop - LANDOKMAI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --brand:#0f2f45;      /* น้ำเงินเข้ม */
+      --brand-2:#c9a06b;    /* ทอง */
+      --text:#1e293b;
+      --muted:#64748b;
+      --bg:#fff;
+      --line:#e5e7eb;
+      --card:#ffffff;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;background:var(--bg);color:var(--text);font-family:Poppins,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+    img{max-width:100%;display:block}
+    a{color:inherit;text-decoration:none}
+    .container{max-width:1200px;margin:0 auto;padding:0 16px}
+
+    /* ===== NAV (เหมือนหน้า Home) ===== */
+    .topbar{position:sticky;top:0;background:#fff;border-bottom:1px solid var(--line);z-index:50}
+    .nav{display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding:12px 0}
+    .logo{display:flex;align-items:center;gap:10px;font-weight:700}
+    .logo-badge{border:2px solid var(--brand-2);color:var(--brand-2);padding:6px 8px;border-radius:10px;font-size:13px;line-height:1}
+    .nav-links{display:flex;gap:14px;width:100%;order:3}
+    .nav-links a{font-weight:500}
+    .nav-links a:hover{color:var(--brand-2)}
+    .search{display:flex;align-items:center;gap:8px;margin-left:auto}
+    .search input{width:150px;padding:8px 10px;border:1px solid #e2e8f0;border-radius:8px}
+    .btn{padding:8px 12px;border:1px solid var(--brand);border-radius:10px;font-weight:600}
+    .btn.login{background:var(--brand);color:#fff}
+    .btn.cart{background:#fff;color:var(--brand)}
+    .badge{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--brand);color:#fff;font-size:12px;margin-left:6px}
+
+    /* ===== PAGE HEADER / BREADCRUMB ===== */
+    .pagehead{padding:18px 0;border-bottom:1px solid var(--line);background:#fff}
+    .crumb{font-size:13px;color:var(--muted)}
+    .crumb a{color:var(--muted)}
+    .crumb a:hover{color:var(--brand-2)}
+    .h1{margin:6px 0 0;font-size:26px;font-weight:700;color:var(--brand)}
+
+    /* ===== PROMO BANNERS (2 คอลัมน์ใหญ่) ===== */
+    .promo{display:grid;grid-template-columns:1fr;gap:18px;padding:18px 0}
+    .promo-card{
+      position:relative;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#f8fafc;
+      min-height:220px;
+    }
+    .promo-card::before{
+      content:"";position:absolute;inset:0;background-size:cover;background-position:center;transform:scale(1.02);
+      filter:grayscale(8%) brightness(1.03);
+    }
+    .promo-1::before{background-image:url('https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1600&auto=format&fit=crop');}
+    .promo-2::before{background-image:url('https://images.unsplash.com/photo-1519682337058-a94d519337bc?q=80&w=1600&auto=format&fit=crop');}
+    .promo-overlay{position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.45),rgba(0,0,0,.1));}
+    .promo-body{position:relative;z-index:1;color:#fff;height:100%;display:grid;place-items:center;text-align:center;padding:18px}
+    .promo-title{font-size:28px;margin:0 0 8px;font-weight:800;letter-spacing:.5px}
+    .promo-sub{margin:0 0 12px;opacity:.95}
+    .cta{display:inline-block;background:var(--brand-2);border:0;color:#fff;padding:10px 16px;border-radius:10px;font-weight:700}
+
+    /* ===== FILTER BAR ===== */
+    .filters{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;padding:14px;border:1px solid var(--line);border-radius:12px;background:#fff;margin-bottom:16px}
+    .filters .left{display:flex;gap:10px;align-items:center}
+    .chip{padding:8px 10px;border:1px solid var(--line);border-radius:999px;font-weight:600;background:#fff}
+    .chip.active{border-color:var(--brand-2);color:#fff;background:var(--brand-2)}
+    select, .filters input[type="search"]{padding:8px 10px;border:1px solid #e2e8f0;border-radius:10px;outline:none}
+
+    /* ===== PRODUCTS GRID ===== */
+    .section{padding:18px 0}
+    .sec-title{font-weight:700;margin:0 0 12px}
+    .grid{display:grid;grid-template-columns:1fr;gap:16px}
+    .card{
+      background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;
+      transition:transform .2s,box-shadow .2s
+    }
+    .card:hover{transform:translateY(-3px);box-shadow:0 10px 24px rgba(0,0,0,.08)}
+    .thumb{position:relative;aspect-ratio:4/3;overflow:hidden}
+    .thumb img{width:100%;height:100%;object-fit:cover}
+    .off{position:absolute;left:10px;top:10px;background:#ef4444;color:#fff;font-size:12px;font-weight:700;border-radius:999px;padding:6px 10px}
+    .body{padding:12px 14px}
+    .sku{font-size:12px;color:var(--muted);margin:0 0 4px}
+    .name{font-weight:700;margin:0 0 6px}
+    .desc{font-size:13px;color:var(--muted);margin:0 0 10px}
+    .price{display:flex;align-items:center;gap:8px}
+    .now{font-weight:800}
+    .old{color:#94a3b8;text-decoration:line-through}
+    .actions{display:flex;gap:8px;margin-top:10px}
+    .btn-sm{padding:8px 10px;border-radius:10px;border:1px solid var(--brand-2);font-weight:700}
+    .btn-sm.primary{background:var(--brand-2);color:#fff}
+    .btn-sm.ghost{background:#fff;color:var(--brand-2)}
+    .center{display:grid;place-items:center}
+
+    /* ===== FOOTER (เหมือนหน้า Home) ===== */
+    .band{background:var(--brand-2);color:#fff;padding:14px 0;text-align:center;font-weight:600;margin-top:24px}
+    footer{background:var(--brand);color:#e2e8f0}
+    .footer-grid{display:grid;grid-template-columns:1fr;gap:20px;padding:24px 0}
+    .foot-title{color:#fff;font-weight:700;margin:0 0 10px}
+    .subscribe input{width:100%;padding:10px;border-radius:10px;border:1px solid #0b2232;background:#fff;color:#0b2232}
+    .subscribe button{margin-top:10px;width:100%;padding:10px;border-radius:10px;border:0;background:#fff;color:#0b2232;font-weight:700}
+    .qr{width:140px;height:140px;border:6px solid #0b2232;border-radius:8px;background:repeating-linear-gradient(45deg,#0b2232 0 6px,transparent 6px 12px)}
+    .copyright{border-top:1px solid #0b2232;text-align:center;padding:14px 0;color:#cbd5e1;font-size:13px}
+
+    /* ===== Responsive ===== */
+    @media (min-width:768px){
+      .nav-links{order:0;width:auto}
+      .search input{width:200px}
+      .promo{grid-template-columns:1fr 1fr}
+      .grid{grid-template-columns:repeat(2,1fr)}
+    }
+    @media (min-width:1024px){
+      .nav{flex-wrap:nowrap;padding:14px 0}
+      .search input{width:260px}
+      .grid{grid-template-columns:repeat(4,1fr)}
+      .promo-card{min-height:260px}
+      .promo-title{font-size:32px}
+    }
+        /* === HERO SLIDER (Shop) === */
+    .section.hero{padding:0}
+    .slides{
+      position:relative; border-radius:16px; overflow:hidden;
+      min-height:520px; background:#000;
+      box-shadow:0 12px 28px rgba(0,0,0,.15);
+    }
+    .slides .slide{
+      position:absolute; inset:0;
+      background-size:cover; background-position:center;
+      opacity:0; transform:scale(1.03);
+      transition:opacity .6s ease, transform 1.2s ease;
+    }
+    .slides .slide.active{opacity:1; transform:scale(1)}
+    .hero-overlay{position:absolute; inset:0; background:
+      linear-gradient(0deg,rgba(0,0,0,.55),rgba(0,0,0,.15))}
+    .hero-content{
+      position:absolute; inset:0; display:grid; place-items:center; text-align:center;
+      color:#fff; padding:24px;
+    }
+    .hero-title{
+      margin:0 0 8px; font-weight:800; letter-spacing:.4px;
+      font-size:42px; line-height:1.15; text-shadow:0 3px 16px rgba(0,0,0,.35);
+    }
+    .hero-sub{margin:0 0 16px; opacity:.95}
+    .slides .cta{display:inline-block; background:var(--brand-2); color:#fff;
+      padding:12px 18px; border-radius:12px; font-weight:800; border:0}
+
+    /* arrows */
+    .arrow{
+      position:absolute; top:50%; translate:0 -50%;
+      width:44px; height:44px; display:grid; place-items:center;
+      background:#fff; color:var(--brand); border-radius:999px; cursor:pointer;
+      box-shadow:0 6px 18px rgba(0,0,0,.18); font-size:28px; user-select:none;
+    }
+    .arrow.left{left:16px}
+    .arrow.right{right:16px}
+    .arrow:hover{transform:scale(1.05) translateZ(0)}
+
+    /* responsive */
+    @media (min-width:768px){
+      .slides{min-height:600px}
+      .hero-title{font-size:56px}
+    }
+    @media (min-width:1024px){
+      .slides{min-height:640px}
+      .hero-title{font-size:64px}
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <div class="topbar">
+    <div class="container nav">
+      <div class="logo">
+        <span class="logo-badge">Flower</span>
+        <!-- <span>LANDOKMAI</span> -->
+        <a href="Homepage.html">LANDOKMAI</a>
+      </div>
+      <nav class="nav-links">
+        <a href="Homepage.html">HOME</a>
+        <a href="Shop.html">SHOP</a>
+        <a href="How_to_order.html">HOW TO ORDER</a>
+        <a href="Blog.html">BLOG</a>
+        <a href="contact.html">CONTACT</a>
+        <a href="Login.html">LOGIN</a>
+      </nav>
+      <div class="search">
+        <!-- <input type="search" placeholder="Search…" aria-label="ค้นหา"> -->
+        <form action="/search" method="GET" style="display:flex;gap:8px;align-items:center">
+          <input type="search" name="q" placeholder="Search…" aria-label="ค้นหา">
+          <button class="btn" type="submit">ค้นหา</button>
+        </form>
+        <a class="btn cart" href="#cart">My Cart <span class="badge">0</span></a>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE HEAD -->
+  <div class="pagehead">
+    <div class="container">
+      <div class="crumb"><a href="Homepage.html">Home</a> / Shop</div>
+      <h1 class="h1">Shop</h1>
+    </div>
+  </div>
+
+  <!-- PROMO BANNERS -->
+  <!-- <section class="container promo">
+    <a class="promo-card promo-1" href="#">
+      <div class="promo-overlay"></div>
+      <div class="promo-body">
+        <div>
+          <p class="promo-sub">ALL TIME BEST SELLING PRODUCT</p>
+          <a class="cta" href="Shop.html">Shop Now</a>
+        </div>
+      </div>
+    </a>
+    <a class="promo-card promo-2" href="#">
+      <div class="promo-overlay"></div>
+      <div class="promo-body">
+        <div>
+          <h3 class="promo-title">SPECIAL<br> PROMOTION</h3>
+          <a class="cta" href="#">ดูสินค้า</a>
+        </div>
+      </div>
+    </a>
+  </section> -->
+  <section class="container section hero">
+    <div class="slides" id="slides">
+        <div class="slide active" style="background-image:url('https://images.unsplash.com/photo-1589244159943-460088ed5c92?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Zmxvd2VyJTIwc2hvcHxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&q=60&w=1000');"></div>
+        <div class="slide" style="background-image:url('https://plus.unsplash.com/premium_photo-1661292066962-48e5815dc7ce?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1470');"></div>
+        <div class="slide" style="background-image:url('https://plus.unsplash.com/premium_photo-1661293802864-de114f02fbfc?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1170');"></div>
+        <div class="slide" style="background-image:url('https://media.istockphoto.com/id/1590014124/photo/beautiful-colorful-flowers-in-a-flower-shop.webp?a=1&s=612x612&w=0&k=20&c=gnT-e_OCvFk3ZwgiF1m67_0_d7JicAIe5--D2CjNQC0=');"></div>
+        <div class="slide" style="background-image:url('https://media.istockphoto.com/id/1473510373/photo/flower-stalls-in-london.webp?a=1&s=612x612&w=0&k=20&c=L2iayIHOcqoQyzpJa3JZryrvQ4YG6hou4OUnP9v0vpU=');"></div>
+        <div class="hero-overlay"></div>
+      <!-- ข้อความกลางภาพ -->
+      <div class="hero-content">
+        <div>
+          <h1 class="hero-title">Flower Fresh For You</h1>
+          <p class="hero-sub">We ensure the best quality flowers every time you order with us</p>
+        </div>
+      </div>
+
+      <!-- ปุ่มเลื่อนสไลด์ซ้าย/ขวา -->
+      <div class="arrow left" id="prev" aria-label="ก่อนหน้า">‹</div>
+      <div class="arrow right" id="next" aria-label="ถัดไป">›</div>
+    </div>
+  </section>
+
+  <!-- FILTER BAR -->
+  <section class="container">
+    <div class="filters">
+      <div class="left">
+        <span class="chip active">ทั้งหมด</span>
+        <span class="chip">ช่อดอกไม้</span>
+        <span class="chip">แจกัน/ตะกร้า</span>
+        <span class="chip">กุหลาบพรีเมียม</span>
+      </div>
+      <div class="right" style="display:flex;gap:10px;align-items:center">
+        <input type="search" id="q" placeholder="ค้นหาสินค้า…">
+        <label>Sort:
+          <select id="sort">
+            <option value="popular">ยอดนิยม</option>
+            <option value="price-asc">ราคาต่ำ→สูง</option>
+            <option value="price-desc">ราคาสูง→ต่ำ</option>
+          </select>
+        </label>
+      </div>
+    </div>
+  </section>
+
+  <!-- TRENDING -->
+  <section class="container section">
+    <h2 class="sec-title">Trending Flowers</h2>
+    <div class="grid">
+      <!-- 1 -->
+      <article class="card">
+        <div class="thumb">
+          <img src="https://static.wixstatic.com/media/83dc23_29551fe239024c1dafefbe15cd1f0f52~mv2.jpeg/v1/fill/w_354,h_354,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/83dc23_29551fe239024c1dafefbe15cd1f0f52~mv2.jpeg" alt="Happy Blue">
+          <div class="off">฿300 off</div>
+        </div>
+        <div class="body">
+          <p class="sku">A469 • Flower Bouquet Q</p>
+          <h3 class="name">Happy Blue(ดอกไม้สด)</h3>
+          <p class="desc">ช่อดอกไม้โทนฟ้าสดใส เติมลุคสนุกให้วันพิเศษ</p>
+          <div class="price"><span class="now">฿1,490</span><span class="old">฿1,790</span></div>
+          <div class="actions">
+            <a class="btn-sm primary" href="#">ดูสินค้า</a>
+            <button class="btn-sm ghost" data-add>เพิ่มลงตะกร้า</button>
+          </div>
+        </div>
+      </article>
+
+      <!-- 2 -->
+      <article class="card">
+        <div class="thumb">
+          <img src="https://static.wixstatic.com/media/78aa83_1bd3e8c0c52949d39c4790ebd7becd73~mv2.jpg/v1/fill/w_354,h_354,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/78aa83_1bd3e8c0c52949d39c4790ebd7becd73~mv2.jpg" alt="Flower Box">
+          <div class="off">฿400 off</div>
+        </div>
+        <div class="body">
+          <p class="sku">A470 • Flower Box</p>
+          <h3 class="name">Flower Box</h3>
+          <p class="desc">โทนฟ้าขาวสดใส เหมาะกับโอกาสพิเศษ</p>
+          <div class="price"><span class="now">฿1,790</span><span class="old">฿2,190</span></div>
+          <div class="actions">
+            <a class="btn-sm primary" href="#">ดูสินค้า</a>
+            <button class="btn-sm ghost" data-add>เพิ่มลงตะกร้า</button>
+          </div>
+        </div>
+      </article>
+
+      <!-- 3 -->
+      <article class="card">
+        <div class="thumb">
+          <img src="https://static.wixstatic.com/media/78aa83_a7b241c561e54a079ebc2659bd1d70c3~mv2.jpeg/v1/fill/w_354,h_354,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/78aa83_a7b241c561e54a079ebc2659bd1d70c3~mv2.jpeg" alt="Flower Bouquet">
+          <div class="off">฿200 off</div>
+        </div>
+        <div class="body">
+          <p class="sku">BX013-S • Flower Bouquet</p>
+          <h3 class="name">Flesh Rose</h3>
+          <p class="desc">ธีมวาเลนไทน์ ดอกกุกลาบสดใส</p>
+          <div class="price"><span class="now">฿2,790</span><span class="old">฿2,990</span></div>
+          <div class="actions">
+            <a class="btn-sm primary" href="#">ดูสินค้า</a>
+            <button class="btn-sm ghost" data-add>เพิ่มลงตะกร้า</button>
+          </div>
+        </div>
+      </article>
+
+      <!-- 4 -->
+      <article class="card">
+        <div class="thumb">
+          <img src="https://static.wixstatic.com/media/78aa83_fe8a7f87b8c748599309d20b0e6c0367~mv2.jpeg/v1/fill/w_267,h_275,al_c,q_80,usm_0.66_1.00_0.01,enc_auto/78aa83_fe8a7f87b8c748599309d20b0e6c0367~mv2.jpeg" alt="White Roses">
+          <div class="off">฿1,200 off</div>
+        </div>
+        <div class="body">
+          <p class="sku">A513 • Flower Bouquet</p>
+          <h3 class="name">Witch’s Roses</h3>
+          <p class="desc">ช่อกุหลาบขาวบริสุทธิ์ ไม่ซ้ำใคร</p>
+          <div class="price"><span class="now">฿3,590</span><span class="old">฿4,790</span></div>
+          <div class="actions">
+            <a class="btn-sm primary" href="#">ดูสินค้า</a>
+            <button class="btn-sm ghost" data-add>เพิ่มลงตะกร้า</button>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- BEST SELLING -->
+  <section class="container section">
+    <h2 class="sec-title">Best-Selling Flowers</h2>
+    <div class="grid">
+      <!-- 5 -->
+      <article class="card">
+        <div class="thumb">
+          <img src="https://static.wixstatic.com/media/78aa83_58a255af325a4cb49898b495d848ede5~mv2.jpeg/v1/fill/w_925,h_1119,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/78aa83_58a255af325a4cb49898b495d848ede5~mv2.jpeg" alt="Lily">
+          <div class="off">Hot</div>
+        </div>
+        <div class="body">
+          <p class="sku">BS01 • Flower Bouquet </p>
+          <h3 class="name">Red Romance</h3>
+          <p class="desc">ช่อลิลลี่ขาวบริษุทธิ์</p>
+          <div class="price"><span class="now">฿1,990</span><span class="old">฿2,390</span></div>
+          <div class="actions">
+            <a class="btn-sm primary" href="#">ดูสินค้า</a>
+            <button class="btn-sm ghost" data-add>เพิ่มลงตะกร้า</button>
+          </div>
+        </div>
+      </article>
+
+      <!-- 6 -->
+      <article class="card">
+        <div class="thumb">
+          <img src="https://static.wixstatic.com/media/78aa83_c737748e9d6444f4b09863204cb08165~mv2.jpeg/v1/fill/w_354,h_354,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/78aa83_c737748e9d6444f4b09863204cb08165~mv2.jpeg" alt="Flower Box">
+        </div>
+        <div class="body">
+          <p class="sku">BS02 • Pure White</p>
+          <h3 class="name">Pure White</h3>
+          <p class="desc">โทนขาวส้มมินิมอล เรียบหรูดูแพง</p>
+          <div class="price"><span class="now">฿1,590</span><span class="old">฿1,890</span></div>
+          <div class="actions">
+            <a class="btn-sm primary" href="#">ดูสินค้า</a>
+            <button class="btn-sm ghost" data-add>เพิ่มลงตะกร้า</button>
+          </div>
+        </div>
+      </article>
+
+      <!-- 7 -->
+      <article class="card">
+        <div class="thumb">
+          <img src="https://static.wixstatic.com/media/78aa83_7383f2e6bb0947e8a224aab124470796~mv2.jpeg/v1/fill/w_318,h_318,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/78aa83_7383f2e6bb0947e8a224aab124470796~mv2.jpeg" alt="Luxurious">
+        <div class="off">฿30 off</div>
+        </div>
+        <div class="body">
+          <p class="sku">BS03 • Flower Bouquet</p>
+          <h3 class="name">Luxurious Flower For Best Person</h3>
+          <p class="desc">ของขวัญสุดพิเศษ</p>
+          <div class="price"><span class="now">฿16,000</span><span class="old">฿20,000</span></div>
+          <div class="actions">
+            <a class="btn-sm primary" href="#">ดูสินค้า</a>
+            <button class="btn-sm ghost" data-add>เพิ่มลงตะกร้า</button>
+          </div>
+        </div>
+      </article>
+
+      <!-- 8 -->
+      <article class="card">
+        <div class="thumb">
+          <img src="https://www.lovelinkflower.com/wp-content/uploads/2022/04/Bu-301-1200-1200-1.jpg" alt="Teddy Bloom">
+          <div class="off">฿80 off</div>
+        </div>
+        <div class="body">
+          <p class="sku">BS04 • Flower Extra</p>
+          <h3 class="name">Teddy Bloom</h3>
+          <p class="desc">ช่อพร้อมตุ๊กตาหมี น่ารักถูกใจ</p>
+          <div class="price"><span class="now">฿1,290</span><span class="old">฿1,370</span></div>
+          <div class="actions">
+            <a class="btn-sm primary" href="#">ดูสินค้า</a>
+            <button class="btn-sm ghost" data-add>เพิ่มลงตะกร้า</button>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <div class="center" style="margin-top:14px">
+      <a class="btn-sm ghost" href="#">Load more</a>
+    </div>
+  </section>
+
+  <div class="band">Official Social Network Account • Facebook • Instagram</div>
+
+  <footer id="contact">
+    <div class="container footer-grid">
+      <div>
+        <a href="#" style="color:#cbd5e1">Privacy Policy</a> •
+        <a href="#" style="color:#cbd5e1">Delivery & Return Policy</a>
+        <h3 class="foot-title">ติดต่อสั่งซื้อสินค้า</h3>
+        <p>Line : @Landokmaishop</p>
+        <p>หรือโทร : <a href="tel:098-xxx-xxxx" style="color:#fff">098-xxx-xxxx</a></p>
+        <a class="btn" style="display:inline-block;margin-top:8px;background:#00c300;border-color:#00c300;color:#fff" href="#">Add Friends</a>
+      </div>
+      <div class="qr" aria-label="QR Code placeholder"></div>
+    </div>
+    <div class="copyright">©2025 by Landokmai</div>
+  </footer>
+
+  <script>
+    // demo: เพิ่มลงตะกร้า (แค่ข้อความแจ้ง)
+    document.querySelectorAll('[data-add]').forEach(b=>{
+      b.addEventListener('click',()=>alert('เพิ่มลงตะกร้าแล้ว (เดโม)'));
+    (function(){
+    const wrap = document.getElementById('slides');
+    if(!wrap) return;
+    const slides = [...wrap.querySelectorAll('.slide')];
+    const btnPrev = document.getElementById('prev');
+    const btnNext = document.getElementById('next');
+    let i = slides.findIndex(s => s.classList.contains('active'));
+    if (i < 0) i = 0, slides[0]?.classList.add('active');
+
+    const show = (n)=>{
+      slides.forEach((s,idx)=>s.classList.toggle('active', idx===n));
+    };
+    const next = ()=>{ i = (i+1)%slides.length; show(i); };
+    const prev = ()=>{ i = (i-1+slides.length)%slides.length; show(i); };
+
+    btnNext?.addEventListener('click', next);
+    btnPrev?.addEventListener('click', prev);
+
+    // autoplay + pause on hover
+    let timer = setInterval(next, 5000);
+    wrap.addEventListener('mouseenter', ()=>clearInterval(timer));
+    wrap.addEventListener('mouseleave', ()=>timer = setInterval(next, 5000));
+
+    // keyboard support
+    document.addEventListener('keydown', (e)=>{
+      if(e.key === 'ArrowRight') next();
+      if(e.key === 'ArrowLeft') prev();
+    });
+  })();
+    });
+  </script>
+</body>
+</html>

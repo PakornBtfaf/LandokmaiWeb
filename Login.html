@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Login - LANDOKMAI</title>
+
+  <!-- ฟอนต์เดียวกับหน้า Home -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* ========= THEME (เหมือนหน้า Home) ========= */
+    :root{
+      --brand:#0f2f45;     /* น้ำเงินเข้ม */
+      --brand-2:#c9a06b;   /* ทอง */
+      --text:#1e293b;
+      --muted:#64748b;
+      --bg:#fff;
+      --card:#ffffff;
+      --line:#e5e7eb;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;background:var(--bg);color:var(--text);font-family:Poppins,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+    a{color:inherit;text-decoration:none}
+    img{max-width:100%;display:block}
+    .container{max-width:1200px;margin:0 auto;padding:0 16px}
+
+    /* ========= NAV เหมือนหน้า Home (mobile-first) ========= */
+    .topbar{position:sticky;top:0;background:#fff;border-bottom:1px solid var(--line);z-index:50}
+    .nav{display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding:12px 0}
+    .logo{display:flex;align-items:center;gap:10px;font-weight:700}
+    .logo-badge{border:2px solid var(--brand-2);color:var(--brand-2);padding:6px 8px;border-radius:10px;font-size:13px;line-height:1}
+    .nav-links{display:flex;gap:14px;width:100%;order:3}
+    .nav-links a{font-weight:500}
+    .nav-links a:hover{color:var(--brand-2)}
+    .search{display:flex;align-items:center;gap:8px;margin-left:auto}
+    .search input{width:150px;padding:8px 10px;border:1px solid #e2e8f0;border-radius:8px}
+    .btn{padding:8px 12px;border:1px solid var(--brand);border-radius:10px;font-weight:600}
+    .btn.login{background:var(--brand);color:#fff}
+    .btn.cart{background:#fff;color:var(--brand)}
+    .badge{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--brand);color:#fff;font-size:12px;margin-left:6px}
+
+    /* ========= LOGIN LAYOUT ========= */
+    .section{padding:32px 0}
+    .auth-wrap{display:grid;gap:18px}
+    /* การ์ดฟอร์ม */
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:20px;
+      box-shadow:0 10px 24px rgba(0,0,0,.05);
+    }
+    .headline{margin:0 0 6px;font-size:24px;font-weight:700}
+    .sub{margin:0 0 16px;color:var(--muted);font-weight:400}
+    .in{
+      width:100%;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;outline:none;
+      background:#fff;color:#0b2232
+    }
+    .in:focus{border-color:#cbd5e1;box-shadow:0 0 0 4px rgba(201,160,107,.15)}
+    .row{display:grid;gap:10px;margin-bottom:14px}
+    .row-inline{display:flex;gap:10px;align-items:center;justify-content:space-between}
+    .hint{font-size:13px;color:var(--muted)}
+    .act{display:grid;gap:10px;margin-top:10px}
+    .btn-full{padding:12px 14px;border-radius:12px;border:0;font-weight:700;cursor:pointer}
+    .btn-primary{background:var(--brand-2);color:#fff}
+    .btn-primary:hover{filter:brightness(.96)}
+    .btn-ghost{background:#fff;border:1px solid var(--line);color:var(--text)}
+    .btn-ghost:hover{background:#f8fafc}
+    .link{color:var(--brand-2);font-weight:600}
+    .muted-link{color:var(--muted)}
+    .pw{
+      position:relative;
+    }
+    .pw .toggle{
+      position:absolute;right:10px;top:50%;transform:translateY(-50%);
+      border:0;background:transparent;cursor:pointer;color:var(--muted);font-weight:600
+    }
+
+    /* แผงภาพ/ข้อความข้างๆ (จะโผล่เฉพาะจอกว้าง) */
+    .side{
+      display:none;
+      position:relative;
+      border:1px solid var(--line);
+      border-radius:16px;
+      overflow:hidden;
+      min-height:240px;
+      background:#f8fafc;
+    }
+    .side::before{
+      content:"";
+      position:absolute;inset:0;
+      background-image:url('https://images.unsplash.com/photo-1558861122-40aa75d3a841?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=687');
+      background-size:cover;background-position:center;
+      filter:grayscale(10%) brightness(1.02);
+      transform:scale(1.02);
+    }
+    .side .overlay{
+      position:absolute;inset:0;
+      background:linear-gradient(0deg,rgba(15,47,69,.45),rgba(15,47,69,.15));
+    }
+    .side .text{
+      position:relative;z-index:1;color:#fff;text-align:center;display:grid;place-items:center;height:100%;padding:24px
+    }
+    .side h3{margin:0 0 8px;font-size:28px;font-weight:700}
+    .side p{margin:0;opacity:.95}
+
+    /* ========= FOOTER เหมือนหน้า Home ========= */
+    .band{background:var(--brand-2);color:#fff;padding:14px 0;text-align:center;font-weight:600;margin-top:24px}
+    footer{background:var(--brand);color:#e2e8f0}
+    .footer-grid{display:grid;grid-template-columns:1fr;gap:20px;padding:24px 0}
+    .foot-title{color:#fff;font-weight:700;margin:0 0 10px}
+    .subscribe input{width:100%;padding:10px;border-radius:10px;border:1px solid #0b2232;background:#fff;color:#0b2232}
+    .subscribe button{margin-top:10px;width:100%;padding:10px;border-radius:10px;border:0;background:#fff;color:#0b2232;font-weight:700}
+    .qr{width:140px;height:140px;border:6px solid #0b2232;border-radius:8px;background:repeating-linear-gradient(45deg,#0b2232 0 6px,transparent 6px 12px)}
+    .copyright{border-top:1px solid #0b2232;text-align:center;padding:14px 0;color:#cbd5e1;font-size:13px}
+
+    /* ========= Responsive (เหมือนหน้า Home) ========= */
+    @media (min-width:768px){
+      .nav-links{order:0;width:auto}
+      .search input{width:200px}
+      .auth-wrap{grid-template-columns:1fr 1fr;align-items:stretch}
+      .side{display:block}
+    }
+    @media (min-width:1024px){
+      .nav{flex-wrap:nowrap;padding:14px 0}
+      .search input{width:260px}
+      .section{padding:48px 0}
+      .footer-grid{grid-template-columns:1.4fr 1fr 1fr;gap:30px;padding:36px 0}
+      .side h3{font-size:32px}
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== NAVBAR (เหมือนหน้า Home) ===== -->
+  <div class="topbar">
+    <div class="container nav">
+      <div class="logo">
+        <span class="logo-badge">Flower</span>
+        <!-- <span>LANDOKMAI</span> -->
+        <a href="Homepage.html">LANDOKMAI</a>
+      </div>
+      <nav class="nav-links">
+        <a href="Homepage.html">HOME</a>
+        <a href="#shop">SHOP</a>
+        <a href="#howto">HOW TO ORDER</a>
+        <a href="#blog">BLOG</a>
+        <a href="#contact">CONTACT</a>
+      </nav>
+      <div class="search">
+        <input type="search" placeholder="Search…" aria-label="ค้นหา">
+        <a class="btn cart" href="#cart">My Cart <span class="badge">0</span></a>
+        <!-- <a class="btn login" href="login.html">Log in</a> -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== LOGIN SECTION ===== -->
+  <section class="container section">
+    <div class="auth-wrap">
+      <!-- Card: Login form -->
+      <div class="card">
+        <h1 class="headline">เข้าสู่ระบบ</h1>
+        <p class="sub">ยินดีต้อนรับกลับมา กรุณาเข้าสู่ระบบเพื่อดำเนินการสั่งซื้อ</p>
+
+        <form id="loginForm" action="/login" method="POST" novalidate>
+          <div class="row">
+            <label for="email">อีเมล</label>
+            <input class="in" id="email" name="email" type="email" placeholder="you@example.com" required />
+          </div>
+
+          <div class="row pw">
+            <label for="password">รหัสผ่าน</label>
+            <input class="in" id="password" name="password" type="password" placeholder="••••••••" minlength="6" required />
+            <button type="button" class="toggle" aria-label="สลับแสดงรหัสผ่าน"><br>แสดง</button>
+          </div>
+
+          <div class="row-inline">
+            <label class="hint"><input type="checkbox" id="remember"> จดจำฉันไว้</label>
+            <a class="muted-link" href="#">ลืมรหัสผ่าน?</a>
+          </div>
+
+          <div class="act">
+            <button class="btn-full btn-primary" type="submit">Log in</button>
+            <button class="btn-full btn-ghost" type="button" onclick="window.location.href='register.html'">สร้างบัญชีใหม่</button>
+          </div>
+
+          <p class="hint" style="margin-top:10px">เข้าสู่ระบบต่อด้วย
+            <a class="link" href="#">Facebook</a> • <a class="link" href="#">Google</a>
+          </p>
+        </form>
+      </div>
+
+      <!-- Side panel (ภาพ/ข้อความ mood ให้กลืนกับแบรนด์) -->
+      <aside class="side" aria-hidden="true">
+        <div class="overlay"></div>
+        <div class="text">
+          <div>
+            <h3>Fresh & Minimal</h3>
+            <p>ดอกไม้คัดเกรดสดใหม่ ส่งไว ดูแลด้วยใจ</p>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ===== SOCIAL BAND + FOOTER (เหมือนหน้า Home) ===== -->
+  <div class="band">Official Social Network Account • Facebook • Instagram</div>
+
+  <footer id="contact">
+    <div class="container footer-grid">
+      <!-- <div class="subscribe">
+        <h3 class="foot-title">SUBSCRIBE FOR UPDATES</h3>
+        <input type="email" placeholder="Email Address" aria-label="อีเมล">
+        <button>Submit</button>
+        <div style="margin-top:14px;">
+          <a href="#" style="color:#cbd5e1">Privacy Policy</a> •
+          <a href="#" style="color:#cbd5e1">Delivery & Return Policy</a>
+        </div>
+      </div> -->
+
+      <div>
+        <h3 class="foot-title">ติดต่อสั่งซื้อสินค้า</h3>
+        <p>Line : @Landokmaishop</p>
+        <p>หรือโทร : <a href="tel:098-xxx-xxxx" style="color:#fff">098-xxx-xxxx</a></p>
+        <a class="btn" style="display:inline-block;margin-top:8px;background:#00c300;border-color:#00c300;color:#fff" href="#">Add Friends</a>
+      </div>
+
+      <div class="qr" aria-label="QR Code placeholder"></div>
+    </div>
+    <div class="copyright">©2025 by SummerFlower.co</div>
+  </footer>
+
+
+  <!-- ===== JS: แสดง/ซ่อนรหัสผ่าน + ตัวอย่าง submit ===== -->
+  <script>
+    // toggle password visibility
+    document.querySelector('.pw .toggle').addEventListener('click', function(){
+      const pw = document.getElementById('password');
+      const isPw = pw.type === 'password';
+      pw.type = isPw ? 'text' : 'password';
+      this.textContent = isPw ? 'ซ่อน' : 'แสดง';
+      pw.focus();
+    });
+
+  </script>
+</body>
+</html>
