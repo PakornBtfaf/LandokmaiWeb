@@ -72,7 +72,7 @@ app.get('/search', async (req, res) => {
     const sql = `
       SELECT page_file
       FROM flowers
-      WHERE LOWER(name_th) = ? OR LOWER(name_en) = ?
+      WHERE LOWER(name_th) like ? OR LOWER(name_en) like ?
       LIMIT 1
     `;
     const [rows] = await pool.query(sql, [keyword, keyword]);
@@ -103,3 +103,4 @@ app.use((req, res) => {
 app.listen(PORT, () => {
   console.log(`🚀 Server running at http://localhost:${PORT}`);
 });
+
