@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Shop — LANDOKMAI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    :root{--brand:#0f2f45;--muted:#64748b}
+    *{box-sizing:border-box}
+    body{font-family:Poppins,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:#f7fafc;margin:0;color:#1e293b}
+    header{display:flex;align-items:center;justify-content:space-between;background:#fff;padding:1rem 1.25rem;border-bottom:1px solid #e5e7eb;position:sticky;top:0;z-index:10}
+    .logo{font-weight:700;color:var(--brand)}
+    nav a{margin-right:1rem;color:var(--brand);text-decoration:none}
+    .wrap{max-width:1200px;margin:1.25rem auto;padding:0 1rem}
+    .toolbar{display:flex;gap:.5rem;align-items:center;margin-bottom:1rem}
+    .toolbar input{flex:1;min-width:200px;padding:.7rem;border:1px solid #e5e7eb;border-radius:10px}
+    .toolbar button{padding:.7rem 1rem;border:0;border-radius:10px;background:var(--brand);color:#fff;font-weight:600;cursor:pointer}
+    .layout{display:grid;grid-template-columns:2fr 1fr;gap:1rem}
+    .card{background:#fff;border:1px solid #e5e7eb;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.05);padding:1rem}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem}
+    .item{border:1px solid #e5e7eb;border-radius:14px;padding:.75rem;background:#fff;display:flex;flex-direction:column}
+    .item img{width:100%;height:160px;object-fit:cover;border-radius:10px}
+    .name{font-weight:600}
+    .muted{color:var(--muted);font-size:.9rem}
+    .row{display:flex;gap:.5rem;align-items:center}
+    .qty{width:72px;padding:.5rem;border:1px solid #e5e7eb;border-radius:10px}
+    .btn{padding:.55rem .9rem;border:0;border-radius:10px;background:var(--brand);color:#fff;font-weight:600;cursor:pointer}
+    .line{display:flex;justify-content:space-between;margin:.35rem 0}
+    .aside h3{margin:.25rem 0 1rem}
+    .small{font-size:.9rem}
+    @media (max-width: 920px){ .layout{grid-template-columns:1fr} }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">LANDOKMAI</div>
+    <nav>
+      <a href="/">Home</a>
+      <a href="/shop"><strong>Shop</strong></a>
+      <a href="/login">Login</a>
+    </nav>
+  </header>
+
+  <div class="wrap">
+    <div class="toolbar card">
+      <input id="q" placeholder="ค้นหาดอกไม้ เช่น กุหลาบ, lily, bouquet ..." />
+      <button id="searchBtn">ค้นหา</button>
+      <button id="refreshBtn" style="background:#334155">รีเฟรช</button>
+    </div>
+
+    <div class="layout">
+      <section class="card">
+        <div id="result" class="grid"></div>
+      </section>
+
+      <aside class="card aside">
+        <h3>ตะกร้าสินค้า</h3>
+        <div id="cartList"></div>
+        <div style="border-top:1px solid #e5e7eb;margin-top:.5rem;padding-top:.5rem" class="line">
+          <strong>ยอดรวม</strong>
+          <strong id="grand">฿0.00</strong>
+        </div>
+        <button id="checkoutBtn" class="btn" style="margin-top:.75rem;width:100%">ไปชำระเงิน</button>
+      </aside>
+    </div>
+  </div>
+
+  <script>
+    const $ = (s,r=document)=>r.querySelector(s);
+    const $$= (s,r=document)=>[...r.querySelectorAll(s)];
+    const cartKey='cart';
+    let cart = JSON.parse(localStorage.getItem(cartKey)||'[]');
+
+    const url = new URL(location.href);
+    const initialQ = url.searchParams.get('search') || '';
+    $('#q').value = initialQ;
+
+    async function loadProducts(q=''){
+      const params = q ? ('?search='+encodeURIComponent(q)) : '';
+      // no-store เพื่อไม่เอา cache เก่า
+      const r = await fetch('/api/flowers'+params, { cache:'no-store' });
+      const items = await r.json();
+      renderProducts(items);
+    }
+
+    function renderProducts(items){
+      const wrap = $('#result'); wrap.innerHTML='';
+      if(!items.length){
+        wrap.innerHTML = `<div class="muted">ไม่พบสินค้า</div>`;
+        return;
+      }
+      for(const it of items){
+        const art = document.createElement('article');
+        art.className = 'item';
+        art.innerHTML = `
+          <figure><img src="${it.image_url||''}" alt=""></figure>
+          <div class="name">${it.name_th||'-'} <div class="muted">${it.name_en||''}</div></div>
+          <div style="margin:.3rem 0">฿${Number(it.price).toLocaleString('th-TH',{minimumFractionDigits:2})}</div>
+          <div class="row" style="margin-top:auto">
+            <input class="qty" type="number" min="1" value="1"/>
+            <button class="btn" data-add="${it.id}">Add to Cart</button>
+          </div>
+        `;
+        wrap.appendChild(art);
+      }
+      $$('button[data-add]').forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+          const card = btn.closest('.item');
+          const qty = Math.max(1, parseInt($('.qty', card).value||'1',10));
+          const id = Number(btn.getAttribute('data-add'));
+          const name = $('.name', card).childNodes[0].nodeValue.trim();
+          const priceText = card.querySelector('div:nth-of-type(2)').textContent.replace(/[^\d.]/g,'');
+          const price = Number(priceText);
+          const img = $('img', card)?.src || '';
+          addToCart({id, name_th:name, price, qty, image_url:img});
+        });
+      });
+    }
+
+    function saveCart(){ localStorage.setItem(cartKey, JSON.stringify(cart)); redrawCart(); }
+    function addToCart(item){
+      const found = cart.find(x => (x.id||x.flower_id) === (item.id||item.flower_id));
+      if(found){ found.qty = Number(found.qty||1) + Number(item.qty||1); }
+      else{ cart.push({ id:item.id, flower_id:item.id, name_th:item.name_th, price:item.price, qty:item.qty, image_url:item.image_url }); }
+      saveCart();
+    }
+    function removeFromCart(id){ cart = cart.filter(x => (x.id||x.flower_id) !== id); saveCart(); }
+    function setQty(id, qty){
+      qty = Math.max(1, Number(qty)||1);
+      const it = cart.find(x => (x.id||x.flower_id) === id);
+      if(it){ it.qty = qty; saveCart(); }
+    }
+
+    function redrawCart(){
+      const list = $('#cartList'); list.innerHTML='';
+      let sum = 0;
+      for(const it of cart){
+        const line = document.createElement('div');
+        line.className = 'line';
+        const price = Number(it.price||0)*Number(it.qty||1);
+        sum += price;
+        line.innerHTML = `
+          <div class="small">
+            ${it.name_th||'สินค้า'}
+            <div class="muted">
+              <input type="number" min="1" value="${it.qty||1}" data-q="${it.id||it.flower_id}" style="width:64px;padding:.3rem;border:1px solid #e5e7eb;border-radius:8px">
+              <button data-rm="${it.id||it.flower_id}" style="margin-left:.25rem;border:0;background:transparent;color:#ef4444;cursor:pointer">ลบ</button>
+            </div>
+          </div>
+          <div>฿${price.toLocaleString('th-TH',{minimumFractionDigits:2})}</div>
+        `;
+        list.appendChild(line);
+      }
+      $('#grand').textContent = '฿'+sum.toLocaleString('th-TH',{minimumFractionDigits:2});
+
+      $$('input[data-q]').forEach(inp=>{
+        inp.addEventListener('change', e=>{
+          const id = Number(e.target.getAttribute('data-q'));
+          setQty(id, e.target.value);
+        });
+      });
+      $$('button[data-rm]').forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+          const id = Number(btn.getAttribute('data-rm'));
+          removeFromCart(id);
+        });
+      });
+    }
+
+    $('#searchBtn').addEventListener('click', ()=>{
+      const q = $('#q').value.trim();
+      history.replaceState(null, '', q?('/shop?search='+encodeURIComponent(q)):'/shop');
+      loadProducts(q);
+    });
+    $('#q').addEventListener('keydown', e=>{
+      if(e.key==='Enter'){ e.preventDefault(); $('#searchBtn').click(); }
+    });
+    $('#refreshBtn').addEventListener('click', ()=> loadProducts($('#q').value.trim()));
+
+    $('#checkoutBtn').addEventListener('click', ()=>{
+      if(cart.length===0){ alert('ยังไม่มีสินค้าในตะกร้า'); return; }
+      location.href = '/checkout';
+    });
+
+    redrawCart();
+    loadProducts(initialQ);
+  </script>
+</body>
+</html>

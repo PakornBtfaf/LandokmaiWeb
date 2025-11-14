@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>How To Order — LANDOKMAI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --brand:#0f2f45;  
+      --gold:#c9a06b; 
+      --text:#0f172a;
+      --muted:#475569;
+      --line:#e2e8f0;
+      --bg:#fff;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;background:var(--bg);color:var(--text);font-family:"Poppins",system-ui,Segoe UI,Roboto,Arial,sans-serif}
+    .topbar{position:sticky;top:0;background:#fff;border-bottom:1px solid var(--line);z-index:10}
+    .nav{max-width:1100px;margin:0 auto;padding:14px 16px;display:flex;align-items:center;gap:14px}
+    .logo{font-weight:700;color:var(--brand);letter-spacing:.5px}
+    .nav a{margin-left:auto;color:var(--brand);font-weight:600;text-decoration:none}
+    .container{max-width:1100px;margin:0 auto;padding:28px 16px 60px}
+    .title{font-size:42px;line-height:1.2;color:var(--gold);text-align:center;font-weight:700;margin:18px 0 8px}
+    .subtitle{font-size:22px;color:var(--brand);text-align:center;margin-bottom:34px}
+    .grid{display:grid;grid-template-columns:1fr;gap:26px;position:relative}
+    .col{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px 22px 26px}
+    .col h3{margin:0 0 14px;font-size:24px;letter-spacing:.5px;color:var(--gold);display:flex;align-items:center;gap:10px}
+    .pin{font-size:20px;color:var(--gold)}
+    .list{margin-top:12px}
+    .list li{margin:16px 0;line-height:1.8;font-size:18px;color:var(--text)}
+    .list small{color:var(--muted)}
+    @media (min-width: 960px){
+      .grid{grid-template-columns:1fr 1fr}
+      .grid::before{
+        content:"";position:absolute;left:50%;top:12px;bottom:12px;width:1px;background:var(--line);transform:translateX(-.5px);
+      }
+    }
+    .line-add{
+      display:inline-flex;align-items:center;gap:8px;background:#06c755;color:#fff;
+      padding:6px 10px;border-radius:8px;font-weight:700;text-decoration:none;font-size:14px
+    }
+    .line-dot{width:18px;height:18px;border-radius:50%;background:#fff;display:inline-grid;place-items:center;color:#06c755;font-weight:900;font-size:12px}
+    .note{
+      margin-top:18px;color:var(--muted);font-size:14px;line-height:1.75
+    }
+    @media (max-width: 480px){
+      .title{font-size:34px}
+      .subtitle{font-size:18px}
+      .col h3{font-size:20px}
+      .list li{font-size:16px}
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="nav">
+      <div class="logo">LANDOKMAI</div>
+      <a href="Homepage.html">← กลับหน้า Home</a>
+    </div>
+  </div>
+
+  <main class="container">
+    <h1 class="title">How To Order</h1>
+    <p class="subtitle">สั่งสินค้ากับเราง่ายๆ ได้ทุกช่องทาง</p>
+
+    <section class="grid" aria-label="วิธีสั่งซื้อสองช่องทาง">
+      <article class="col">
+        <h3>A) ผ่าน Website <span class="pin">📍</span></h3>
+        <ol class="list">
+          <li>คุณสามารถเลือกดอกไม้ใส่ตะกร้า</li>
+          <li>ชำระเงินผ่าน บัตรเครดิต หรือ โอนเงิน</li>
+          <li>
+            แจ้งการชำระเงินที่ <br />
+            <strong>Email :</strong> Landokmai.co@gmail.com
+          </li>
+        </ol>
+        <p class="note">*กรณีชำระผ่านบัตรเครดิตไม่ต้องแจ้งชำระเงินก็ได้ค่ะ ระบบจะจัดการให้อัตโนมัติ</p>
+      </article>
+      <article class="col">
+        <h3>B) ผ่าน Line <span class="pin">💬</span></h3>
+        <ol class="list">
+          <li>
+            เพิ่มเพื่อนใน Line ID : <strong>@Landokmai</strong>
+            &nbsp;หรือคลิก :
+            <a class="line-add" href="#" aria-label="เพิ่มเพื่อนทางไลน์">
+              <span class="line-dot">L</span> Add Friends
+            </a>
+          </li>
+          <li>เลือกแบบดอกไม้ที่ถูกใจ และส่งรูปหรือรหัสของเราให้กับแอดมิน Line ของเรา</li>
+          <li>ชำระเงินตามยอด และแจ้งการชำระเงินผ่าน Line</li>
+        </ol>
+      </article>
+    </section>
+    <div class="note">
+      หมายเหตุ: หากต้องการใบเสร็จ/ใบกำกับภาษี โปรดแจ้งข้อมูลชื่อบริษัท ที่อยู่ และเลขประจำตัวผู้เสียภาษีกับแอดมิน
+    </div>
+  </main>
+
+</body>
+</html>

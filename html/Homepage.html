@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Homepage - LANDOKMAI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --brand: #0f2f45;
+      --brand-2: #c9a06b;
+      --text: #1e293b;
+      --muted: #64748b;
+      --bg: #fff;
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    html,
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Poppins, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif
+    }
+
+    img {
+      max-width: 100%;
+      display: block
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 16px
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      background: #fff;
+      border-bottom: 1px solid #e5e7eb;
+      z-index: 50
+    }
+
+    .nav {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 0
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700
+    }
+
+    .logo-badge {
+      border: 2px solid var(--brand-2);
+      color: var(--brand-2);
+      padding: 6px 8px;
+      border-radius: 10px;
+      font-size: 13px;
+      line-height: 1
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 14px;
+      width: 100%;
+      order: 3
+    }
+
+    .nav-links a {
+      font-weight: 500
+    }
+
+    .nav-links a:hover {
+      color: var(--brand-2)
+    }
+
+    .search {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-left: auto
+    }
+
+    .search input {
+      width: 150px;
+      padding: 8px 10px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      outline: none
+    }
+
+    .btn {
+      padding: 8px 12px;
+      border: 1px solid var(--brand);
+      border-radius: 10px;
+      font-weight: 600
+    }
+
+    .btn.login {
+      background: var(--brand);
+      color: #fff
+    }
+
+    .btn.cart {
+      background: #fff;
+      color: var(--brand)
+    }
+
+    .badge {
+      display: inline-grid;
+      place-items: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--brand);
+      color: #fff;
+      font-size: 12px;
+      margin-left: 6px
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden
+    }
+
+    .slides {
+      position: relative;
+      height: 56vh;
+      min-height: 360px;
+      border-radius: 14px
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity .8s ease;
+      background-size: cover;
+      background-position: center
+    }
+
+    .slide.active {
+      opacity: 1
+    }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(0deg, rgba(0, 0, 0, .45), rgba(0, 0, 0, .15))
+    }
+
+    .hero-content {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      color: #fff;
+      padding: 0 18px
+    }
+
+    .hero-title {
+      font-size: 28px;
+      margin: 0 0 8px;
+      font-weight: 700;
+      letter-spacing: .5px
+    }
+
+    .hero-sub {
+      font-weight: 300;
+      opacity: .95;
+      margin: 0 0 18px
+    }
+
+    .cta {
+      background: var(--brand-2);
+      border: 0;
+      color: #fff;
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer
+    }
+
+    /* ปุ่มลูกศรสไลด์ */
+    .arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, .9);
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      color: #0f172a;
+      cursor: pointer;
+      user-select: none
+    }
+
+    .arrow.left {
+      left: 10px
+    }
+
+    .arrow.right {
+      right: 10px
+    }
+
+    .section {
+      padding: 32px 0
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px
+    }
+
+    .card {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      overflow: hidden;
+      transition: transform .2s, box-shadow .2s
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 24px rgba(0, 0, 0, .08)
+    }
+
+    .card figcaption {
+      padding: 12px 14px;
+      font-weight: 600;
+      text-align: center
+    }
+
+    .center {
+      display: grid;
+      place-items: center
+    }
+
+    .view-collection {
+      margin-top: 14px;
+      border: 1px solid var(--brand-2);
+      color: var(--brand-2);
+      background: #fff;
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-weight: 600
+    }
+
+    .view-collection:hover {
+      background: var(--brand-2);
+      color: #fff
+    }
+
+    .band {
+      background: var(--brand-2);
+      color: #fff;
+      padding: 14px 0;
+      text-align: center;
+      font-weight: 600
+    }
+
+    footer {
+      background: var(--brand);
+      color: #e2e8f0
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      padding: 24px 0
+    }
+
+    .foot-title {
+      color: #fff;
+      font-weight: 700;
+      margin: 0 0 10px
+    }
+
+    .subscribe input {
+      width: 100%;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid #0b2232;
+      background: #fff;
+      color: #0b2232
+    }
+
+    .subscribe button {
+      margin-top: 10px;
+      width: 100%;
+      padding: 10px;
+      border-radius: 10px;
+      border: 0;
+      background: #fff;
+      color: #0b2232;
+      font-weight: 700
+    }
+
+    .qr {
+      width: 140px;
+      height: 140px;
+      border: 6px solid #0b2232;
+      border-radius: 8px;
+      background:
+        repeating-linear-gradient(45deg, #0b2232 0 6px, transparent 6px 12px)
+    }
+
+    .copyright {
+      border-top: 1px solid #0b2232;
+      text-align: center;
+      padding: 14px 0;
+      color: #cbd5e1;
+      font-size: 13px
+    }
+
+    @media (min-width: 480px) {
+      .search input {
+        width: 200px
+      }
+
+      .slides {
+        min-height: 400px
+      }
+
+      .hero-title {
+        font-size: 32px
+      }
+    }
+
+    @media (min-width: 768px) {
+      .nav {
+        gap: 16px
+      }
+
+      .nav-links {
+        order: 0;
+        width: auto
+      }
+
+      .grid {
+        grid-template-columns: repeat(2, 1fr)
+      }
+
+      .slides {
+        height: 56vh
+      }
+
+      .hero-title {
+        font-size: 38px
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .nav {
+        flex-wrap: nowrap;
+        padding: 14px 0
+      }
+
+      .search input {
+        width: 260px
+      }
+
+      .grid {
+        grid-template-columns: repeat(4, 1fr)
+      }
+
+      /* สินค้า 4 คอลัมน์ */
+      .slides {
+        height: 64vh;
+        min-height: 460px;
+        border-radius: 16px
+      }
+
+      .hero-title {
+        font-size: 46px
+      }
+
+      .footer-grid {
+        grid-template-columns: 1.4fr 1fr 1fr;
+        gap: 30px;
+        padding: 36px 0
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="topbar">
+    <div class="container nav">
+      <div class="logo">
+        <span class="logo-badge">Flower</span>
+        <a href="Homepage.html">LANDOKMAI</a>
+      </div>
+      <nav class="nav-links">
+        <a href="Homepage.html">HOME</a>
+        <a href="Shop.html">SHOP</a>
+        <a href="How_to_order.html">HOW TO ORDER</a>
+        <a href="Blog.html">BLOG</a>
+      </nav>
+      <div class="search">
+        <form action="/shop" method="get">
+          <input type="text" name="search" placeholder="ค้นหาดอกไม้...">
+          <button type="submit">ค้นหา</button>
+        </form>
+
+        <a class="btn cart" href="#cart">My Cart <span class="badge">0</span></a>
+        <a class="btn login" href="Login.html">Log in</a>
+      </div>
+    </div>
+  </div>
+  <section class="container section hero">
+    <div class="slides" id="slides">
+      <div class="slide active"
+        style="background-image:url('https://images.unsplash.com/photo-1589244159943-460088ed5c92?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Zmxvd2VyJTIwc2hvcHxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&q=60&w=1000');">
+      </div>
+      <div class="slide active"
+        style="background-image:url('https://plus.unsplash.com/premium_photo-1661292066962-48e5815dc7ce?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8Zmxvd2VyJTIwc2hvcHxlbnwwfHwwfHx8MA%3D%3D');">
+      </div>
+      <div class="slide active"
+        style="background-image:url('https://images.unsplash.com/photo-1589244159943-460088ed5c92?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Zmxvd2VyJTIwc2hvcHxlbnwwfHwwfHx8MA%3D%3D');">
+      </div>
+      <div class="slide active"
+        style="background-image:url('https://images.unsplash.com/photo-1586704235550-c4267ca3e6e9?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8Zmxvd2VyJTIwc2hvcHxlbnwwfHwwfHx8MA%3D%3D');">
+      </div>
+      <div class="slide active"
+        style="background-image:url('https://images.unsplash.com/photo-1619707046314-e76ae25d5ab3?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTh8fGZsb3dlciUyMHNob3B8ZW58MHx8MHx8fDA%3D');">
+      </div>
+      <div class="slide active"
+        style="background-image:url('https://media.istockphoto.com/id/2167362358/photo/austrian-floral-shop.webp?a=1&b=1&s=612x612&w=0&k=20&c=g3YWeI9J4xOFxA6OSjTgUQOXdkU_O1MvkSh36QRltCw=');">
+      </div>
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <div>
+          <h1 class="hero-title">Flower Fresh For You</h1>
+          <p class="hero-sub">We ensure the best quality flowers every time you order with us</p>
+          <a href="Shop.html" class="cta">Shop Now</a>
+        </div>
+      </div>
+      <div class="arrow left" id="prev" aria-label="ก่อนหน้า">‹</div>
+      <div class="arrow right" id="next" aria-label="ถัดไป">›</div>
+    </div>
+  </section>
+  <section class="container section" id="shop">
+    <div class="grid">
+      <figure class="card">
+        <a href="Shop.html">
+          <img
+            src="https://images.unsplash.com/photo-1615385639736-362b69696227?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OXx8Zmxvd2VyJTIwYm91cXVldHxlbnwwfHwwfHx8MA%3D%3D"
+            alt="Flower Bouquet" />
+          <figcaption>Flower Bouquet</figcaption>
+        </a>
+      </figure>
+
+      <figure class="card">
+        <a href="Shop.html">
+          <img
+            src="https://images.unsplash.com/photo-1556269975-7cc2cbc82480?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8Zmxvd2VyJTIwYmFza2V0fGVufDB8fDB8fHww&auto=format&fit=crop&q=60&w=600"
+            alt="Flower Bouquet" />
+          <figcaption>Basket & Vase</figcaption>
+        </a>
+      </figure>
+
+      <figure class="card">
+        <a href="Shop.html">
+          <img
+            src="https://plus.unsplash.com/premium_photo-1703369351133-ae15759133fd?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8Zmxvd2VyJTIwYm91cXVldCUyMHJvc2V8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&q=60&w=600"
+            alt="Flower Bouquet" />
+          <figcaption>Premium Flower</figcaption>
+        </a>
+      </figure>
+
+      <figure class="card">
+        <a href="Shop.html">
+          <img
+            src="https://images.unsplash.com/photo-1589217289787-879b47f6edab?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8Zmxvd2VyJTIwYm94fGVufDB8fDB8fHww&auto=format&fit=crop&q=60&w=600"
+            alt="Flower Bouquet" />
+          <figcaption>Flower Box</figcaption>
+        </a>
+      </figure>
+
+      <figure class="card">
+        <a href="Shop.html">
+          <img
+            src="https://static.wixstatic.com/media/78aa83_3b2385f53f8c4bcb9139b7cb72490efa~mv2.jpeg/v1/fill/w_298,h_398,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/78aa83_3b2385f53f8c4bcb9139b7cb72490efa~mv2.jpeg"
+            alt="Flower Bouquet" />
+          <figcaption>Wreath</figcaption>
+        </a>
+      </figure>
+
+      <figure class="card">
+        <a href="Shop.html">
+          <img
+            src="https://static.wixstatic.com/media/6f35d3_55b9c38c7f8f422bbdfcef8b662a2da7~mv2.jpg/v1/fill/w_318,h_423,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/6f35d3_55b9c38c7f8f422bbdfcef8b662a2da7~mv2.jpg"
+            alt="Flower Bouquet" />
+          <figcaption>Artificial Flower Bouquet</figcaption>
+        </a>
+      </figure>
+
+      <figure class="card">
+        <a href="Shop.html">
+          <img
+            src="https://images.unsplash.com/photo-1502089418555-ebcba08cb377?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8Zmxvd2VyJTIwdmFzZXxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&q=60&w=600"
+            alt="Flower Bouquet" />
+          <figcaption>Flower Vase</figcaption>
+        </a>
+      </figure>
+
+      <figure class="card">
+        <a href="Shop.html">
+          <img
+            src="https://static.wixstatic.com/media/78aa83_6da28ea0e28d433ebb367a94757935aa~mv2.jpeg/v1/fill/w_318,h_423,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/78aa83_6da28ea0e28d433ebb367a94757935aa~mv2.jpeg"
+            alt="Flower Bouquet" />
+          <figcaption>Extra Real</figcaption>
+        </a>
+      </figure>
+
+    </div>
+    <div class="center">
+      <a class="view-collection" href="Shop.html">View Collection</a>
+    </div>
+  </section>
+  <div class="band">Official Social Network Account • Facebook • Instagram</div>
+  <footer id="contact">
+    <div class="container footer-grid">
+      <div>
+        <h3 class="foot-title">ติดต่อสั่งซื้อสินค้า</h3>
+        <p>Line : @LandokmaiShop</p>
+        <p>หรือโทร : <a href="tel:098-xxx-xxxx" style="color:#fff">098-xxx-xxxx</a></p>
+        <a class="btn" style="display:inline-block;margin-top:8px;background:#00c300;border-color:#00c300;color:#fff"
+          href="#">Add Friends</a>
+      </div>
+      <div class="center">
+        <div class="qr" aria-label="QR Code placeholder"></div>
+      </div>
+    </div>
+    <div class="copyright">©2025 by Landokmai</div>
+  </footer>
+  <script>
+
+    (function () {
+      if (window.__addCartInstalled) return;
+      window.__addCartInstalled = true;
+
+      const CART_KEY = 'cart';
+      const $ = (s, r = document) => r.querySelector(s);
+      const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+
+      function getCart() {
+        try { return JSON.parse(localStorage.getItem(CART_KEY) || '[]'); }
+        catch { return []; }
+      }
+      function countQty() {
+        return getCart().reduce((sum, it) => sum + (Number(it.qty) || 1), 0);
+      }
+      function saveCart(list) {
+        localStorage.setItem(CART_KEY, JSON.stringify(list));
+        updateBadge();
+      }
+      function updateBadge() {
+        $$('.badge, #cartCount').forEach(el => el.textContent = countQty());
+      }
+
+      function normalize(item) {
+        return {
+          id: item.id ?? null,
+          name_th: item.name_th || item.name || '',
+          price: Number(item.price || 0),
+          image_url: item.image_url || item.img || '',
+          qty: Number(item.qty || 1)
+        };
+      }
+
+      function addToCart(raw) {
+        const item = normalize(raw);
+        const cart = getCart();
+
+        const idx = cart.findIndex(x =>
+          (item.id && x.id === item.id) ||
+          (!item.id && (x.name_th || '') === (item.name_th || ''))
+        );
+
+        if (idx > -1) {
+          cart[idx].qty = Number(cart[idx].qty || 1) + item.qty;
+          cart[idx].price = Number(cart[idx].price || item.price); // รักษาราคาเดิม
+          if (!cart[idx].image_url && item.image_url) cart[idx].image_url = item.image_url;
+        } else {
+          cart.push(item);
+        }
+
+        saveCart(cart);
+      }
+
+      function bindAddButtons() {
+        $$('[data-add]').forEach(btn => {
+          if (btn.__boundAdd) return;
+          btn.__boundAdd = true;
+          btn.addEventListener('click', () => {
+            let payload;
+            const json = btn.getAttribute('data-add');
+            try {
+              payload = JSON.parse(json);
+            } catch {
+              payload = {
+                id: btn.dataset.id,
+                name_th: btn.dataset.name,
+                price: btn.dataset.price,
+                image_url: btn.dataset.img
+              };
+            }
+            addToCart(payload);
+          });
+        });
+      }
+      const mo = new MutationObserver(bindAddButtons);
+      mo.observe(document.body, { childList: true, subtree: true });
+
+      updateBadge();
+      bindAddButtons();
+
+      window.addToCart = addToCart;
+      window.updateCartBadge = updateBadge;
+    })();
+    const homeSearchForm = document.getElementById('homeSearchForm');
+    const homeSearchInput = document.getElementById('homeSearchInput');
+    if (homeSearchForm && homeSearchInput) {
+      homeSearchForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const q = homeSearchInput.value.trim();
+        location.href = q ? `/shop?search=${encodeURIComponent(q)}` : '/shop';
+      });
+    }
+  </script>
+
+</body>
+
+</html>

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Checkout — LANDOKMAI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    :root{--brand:#0f2f45;--muted:#64748b}
+    *{box-sizing:border-box}
+    body{font-family:Poppins,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:#f7fafc;margin:0;color:#1e293b}
+    header{display:flex;align-items:center;justify-content:space-between;background:#fff;padding:1rem 1.25rem;border-bottom:1px solid #e5e7eb}
+    .logo{font-weight:700;color:var(--brand)}
+    nav a{margin-right:1rem;color:var(--brand);text-decoration:none}
+    .wrap{max-width:960px;margin:1.5rem auto;padding:0 1rem}
+    .card{background:#fff;border:1px solid #e5e7eb;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.05);padding:1.25rem;margin-bottom:1rem}
+    h2{margin-top:0}
+    .grid{display:grid;grid-template-columns:3fr 2fr;gap:1rem}
+    .field{margin-bottom:.75rem}
+    label{display:block;font-size:.9rem;margin-bottom:.25rem}
+    input,textarea{width:100%;padding:.6rem;border:1px solid #e5e7eb;border-radius:10px;font-family:inherit}
+    textarea{resize:vertical;min-height:80px}
+    .btn{padding:.8rem 1.2rem;border-radius:12px;border:0;background:var(--brand);color:#fff;font-weight:600;cursor:pointer;width:100%}
+    .row{display:flex;justify-content:space-between;margin:.3rem 0;font-size:.9rem}
+    .muted{color:var(--muted);font-size:.9rem}
+    .total{font-weight:700;font-size:1.05rem}
+    .item-name{font-weight:500}
+    .danger{color:#b91c1c}
+    @media(max-width:900px){ .grid{grid-template-columns:1fr} }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">LANDOKMAI</div>
+    <nav>
+      <a href="/">Home</a>
+      <a href="/shop">Shop</a>
+      <a href="/login">Account</a>
+    </nav>
+  </header>
+
+  <div class="wrap">
+    <h1>ยืนยันการสั่งซื้อ</h1>
+
+    <div class="grid">
+      <section class="card">
+        <h2>ข้อมูลการจัดส่ง</h2>
+        <div class="muted" style="margin-bottom:.75rem">
+          กรุณากรอกข้อมูลให้ครบถ้วนสำหรับการส่งดอกไม้ให้ถึงมือผู้รับ
+        </div>
+        <form id="orderForm">
+          <div class="field">
+            <label for="customer_name">ชื่อ-นามสกุลผู้สั่ง *</label>
+            <input id="customer_name" required />
+          </div>
+          <div class="field">
+            <label for="customer_address">ที่อยู่จัดส่ง *</label>
+            <textarea id="customer_address" required></textarea>
+          </div>
+          <div class="field">
+            <label for="customer_phone">เบอร์โทรศัพท์ *</label>
+            <input id="customer_phone" required />
+          </div>
+          <div id="formMsg" class="muted"></div>
+          <button type="submit" class="btn" style="margin-top:.75rem">ยืนยันสั่งซื้อ</button>
+        </form>
+      </section>
+
+      <aside class="card">
+        <h2>รายการในตะกร้า</h2>
+        <div id="cartSummary"></div>
+        <div style="border-top:1px solid #e5e7eb;margin-top:.5rem;padding-top:.5rem" class="row">
+          <span class="total">ยอดรวมทั้งหมด</span>
+          <span class="total" id="grandTotal">฿0.00</span>
+        </div>
+      </aside>
+    </div>
+  </div>
+<script>
+  const cartKey = 'cart';
+  let cart = [];
+
+  function loadCart() {
+    try {
+      cart = JSON.parse(localStorage.getItem(cartKey) || '[]');
+    } catch {
+      cart = [];
+    }
+
+    cart = cart.filter(it => it.id || it.flower_id);
+    localStorage.setItem(cartKey, JSON.stringify(cart));
+
+    const box = document.getElementById('cartSummary');
+    box.innerHTML = '';
+    let sum = 0;
+
+    if (!cart.length) {
+      box.innerHTML = '<div class="muted">ตะกร้าว่าง กรุณากลับไปเลือกสินค้าที่หน้า Shop</div>';
+      document.getElementById('grandTotal').textContent = '฿0.00';
+      return;
+    }
+
+    cart.forEach(it => {
+      const qty = Number(it.qty || 1);
+      const price = Number(it.price || 0) * qty;
+      sum += price;
+      const row = document.createElement('div');
+      row.className = 'row';
+      row.innerHTML = `
+        <div>
+          <div class="item-name">${it.name_th || 'สินค้า'}</div>
+          <div class="muted">จำนวน ${qty} ชิ้น</div>
+        </div>
+        <div>฿${price.toLocaleString('th-TH',{minimumFractionDigits:2})}</div>
+      `;
+      box.appendChild(row);
+    });
+
+    document.getElementById('grandTotal').textContent =
+      '฿' + sum.toLocaleString('th-TH',{minimumFractionDigits:2});
+  }
+
+  async function submitOrder(e) {
+    e.preventDefault();
+    const msg = document.getElementById('formMsg');
+    msg.textContent = '';
+    msg.className = 'muted';
+
+    if (!cart.length) {
+      msg.textContent = 'ตะกร้าว่าง ไม่สามารถสั่งซื้อได้';
+      msg.className = 'muted danger';
+      return;
+    }
+
+    const customer_name    = document.getElementById('customer_name').value.trim();
+    const customer_address = document.getElementById('customer_address').value.trim();
+    const customer_phone   = document.getElementById('customer_phone').value.trim();
+
+    if (!customer_name || !customer_address || !customer_phone) {
+      msg.textContent = 'กรุณากรอกข้อมูลให้ครบถ้วน';
+      msg.className = 'muted danger';
+      return;
+    }
+
+    let items = cart.map(it => ({
+      flower_id: it.id || it.flower_id,
+      qty: it.qty || 1
+    })).filter(it => it.flower_id);
+
+    if (!items.length) {
+      msg.textContent = 'ข้อมูลในตะกร้าเก่า ไม่สามารถสั่งซื้อได้ กรุณากลับไปหน้า Shop แล้วเพิ่มสินค้าใหม่อีกครั้ง';
+      msg.className = 'muted danger';
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          customer_name,
+          customer_address,
+          customer_phone,
+          items
+        })
+      });
+
+      if (res.status === 401) {
+        alert('กรุณาเข้าสู่ระบบใหม่อีกครั้ง');
+        location.href = '/login';
+        return;
+      }
+
+      const data = await res.json();
+      if (!res.ok) {
+        console.error(data);
+        msg.textContent = data.message || 'เกิดข้อผิดพลาด ไม่สามารถสั่งซื้อได้';
+        msg.className = 'muted danger';
+        return;
+      }
+      localStorage.removeItem(cartKey);
+      location.href = '/success';
+    } catch (err) {
+      console.error(err);
+      msg.textContent = 'server_error: กรุณาลองใหม่อีกครั้ง';
+      msg.className = 'muted danger';
+    }
+  }
+
+  document.getElementById('orderForm').addEventListener('submit', submitOrder);
+  loadCart();
+</script>
+
+</body>
+</html>
