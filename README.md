@@ -1,170 +1,114 @@
-# LandokmaiWeb
-LANDOKMAI WEB — Full-Stack Flower Shop Application
-
 # LandokmaiWeb 🌸  
 Full-Stack Flower Shop Web Application
 
-LandokmaiWeb is a full-stack web application for an online flower shop.  
-The project is designed as a learning and portfolio project to demonstrate skills in **web development**, **backend APIs**, and **database design**.
+LandokmaiWeb is a full-stack web application designed for an online flower shop.  
+This project showcases skills in **Frontend Development**, **Backend APIs**, and **Database Design**, and is structured as a learning portfolio project.
 
 ---
 
 ## 1. Overview
 
-LandokmaiWeb simulates a real flower shop that also sells products online.  
-Customers can browse bouquets, add them to a cart, and place orders.  
-Admins can manage products, blog posts, and view customer orders through the backend system.
+LandokmaiWeb simulates a real flower shop with online purchasing capabilities.  
+Customers can browse flowers, add them to their cart, and place orders.  
+Admins can manage products, write blog posts, and view customer orders through the backend management system.
 
-This project is built with:
-
+### **Technologies Used**
 - **Frontend:** HTML, CSS, JavaScript  
 - **Backend:** Node.js, Express  
 - **Database:** MySQL  
-- **Architecture:** Separation between `frontend (html/)`, `backend/`, and `database/`.
+- **Architecture:** Separated into `frontend (html/)`, `backend/`, and `database/`
 
 ---
 
 ## 2. Main Features
 
-### 2.1 Customer Side (User)
+---
 
-- **Home Page**
-  - Introduces the Landokmai flower shop concept.
-  - Navigation bar to access *Home*, *Shop*, *Blog*, *Login*, etc.
+### ⭐ **2.1 Customer Side (User)**
 
-- **Shop Page**
-  - Displays list of flower products (name, image, price, short description).
-  - Products are loaded from **MySQL** through a Node.js/Express API.
-  - Product cards use a clean, responsive layout.
+#### **Home Page**
+- Introduction to the Landokmai flower shop.
+- Navigation bar includes links to Home, Shop, Blog, Login.
 
-- **Search & Filtering**
-  - Users can search flowers by name.
-  - Search requests are sent to the backend and matched against the `flowers` table in MySQL.
+#### **Shop Page**
+- Displays flowers with: image, name, price, and short description.
+- Retrieves product data from **MySQL** through backend API.
+- Responsive and clean product card layout.
 
-- **Shopping Cart**
-  - Users can add products to a cart.
-  - Shows list of selected items, quantity, and total price.
-  - Cart state is managed on the frontend and connected to the checkout flow.
+#### **Search System**
+- Users can search flowers by name.
+- Search queries are matched with the `flowers` table in MySQL.
 
-- **Checkout / Order Form**
-  - Users fill in order details:
-    - Full name  
-    - Delivery address  
-    - Phone number  
-    - Additional notes (optional)
-  - When an order is submitted:
-    - Order data (user info + cart items) is sent to the backend.
-    - Order is stored in **MySQL** in the `orders` and/or related order detail tables.
-  - A **Thank You / Order Confirmation** message is shown after successful submission.
+#### **Shopping Cart**
+- Add products to the cart.
+- Shows selected items, total price, and quantities.
+- Works together with checkout page.
 
-- **Blog (Customer View)**
-  - Customers can read blog posts written by the admin.
-  - Blog can be used for flower care tips, special promotions, or shop stories.
+#### **Checkout / Order Form**
+Users fill in:
+- Full Name  
+- Address  
+- Phone Number  
+- Additional notes (optional)
+
+After submission:
+- Order data is sent to backend.
+- Order is stored in the **MySQL database** (`orders`, `order_items`).
+- A **confirmation message** appears.
+
+#### **Blog (Customer View)**
+- Users can read blog posts written by admin.
+- Used for flower care tips, promotions, and shop updates.
 
 ---
 
-### 2.2 Admin Side
+### ⭐ **2.2 Admin Side**
 
-- **Authentication**
-  - Login page with email & password.
-  - System distinguishes between **admin** and **normal user**.
-  - Only admins can access management functions.
+#### **Authentication**
+- Login page with email and password.
+- System distinguishes between **Admin** and **User**.
+- Only Admin can access backend management.
 
-- **Admin Dashboard**
-  - Overview of management functions for:
-    - Products (flowers)
-    - Blog posts
-    - Orders
+#### **Admin Dashboard**
+Manage:
+- Products  
+- Blog Posts  
+- Customer Orders  
 
-- **Product Management**
-  - **Create** new flower products (name, price, description, image URL).
-  - **Read** / list all products.
-  - **Update** existing product info.
-  - **Delete** products from the catalog.
-  - Data is persisted in the `flowers` table in MySQL.
+#### **Product Management**
+- Create new flower products.  
+- View all products.  
+- Edit product details.  
+- Delete products.  
+- All data stored in `flowers` table.
 
-- **Blog Management**
-  - Admin can:
-    - **Create** new blog posts.
-    - **Edit** existing posts.
-    - **Delete** posts.
-  - Blog data is stored in a dedicated blog table in MySQL.
+#### **Blog Management**
+- Admin can create, edit, delete blog posts.
+- Stored in blog table in MySQL.
 
-- **Order Management**
-  - Admin can view a list of all customer orders:
-    - Customer name and contact information
-    - Address
-    - Ordered items and total amount
-    - Order time
-  - Can be used similarly to a **“kitchen screen”** for preparing orders.
+#### **Order Management**
+Admin can view:
+- Customer info  
+- Address  
+- Ordered items  
+- Total price  
+- Order timestamp  
 
----
-
-### 2.3 System & Architecture
-
-- Clear separation between:
-  - `html/` – static frontend pages (Home, Shop, Login, Cart, etc.)
-  - `backend/` – Node.js/Express server, routes, and controller logic
-  - `database/` – SQL scripts for creating database and tables (e.g. `LandokmaiDB`, `flowers`, `users`, `orders`, `blog`).
-
-- Uses environment variables (e.g. `.env`) to store:
-  - MySQL host/user/password
-  - Database name
-  - Server port (e.g. `PORT=3030`)
+Can be used as a **kitchen order screen**.
 
 ---
 
-## 3. Tech Stack
+## 3. System Architecture
 
-- **Frontend**
-  - HTML5, CSS3
-  - Vanilla JavaScript (DOM, events, localStorage for cart)
-  - Responsive layout design
+Clear separation of layers:
+- `html/` → Frontend pages  
+- `backend/` → Node.js server, API routes, controllers  
+- `database/` → SQL scripts for all tables and DB setup  
 
-- **Backend**
-  - Node.js
-  - Express.js (routing, middleware)
-
-- **Database**
-  - MySQL
-  - SQL scripts for:
-    - Database creation (`LandokmaiDB`)
-    - Tables: `flowers`, `users`, `orders`, `order_items`, `blog` (names may vary by script)
-
----
-
-## 4. Project Structure
-How to Run Locally
-
-This is a basic guide for running the project on a local machine.
-
-1.Clone the repository
-2.Install dependencies
-3.Set up MySQL database
-  -Create a database (e.g. LandokmaiDB).
-  -Run the SQL script(s) in the database/ folder to create tables and sample data.
-4.Configure environment variables
- -Create a .env file in backend/ (example):
-  DB_HOST=localhost
-  DB_USER=root
-  DB_PASSWORD=your_password
-  DB_NAME=LandokmaiDB
-  PORT=3030
-5.Start the server
-6.Open the website
-  -Visit: http://localhost:3030
-  -Navigate to:
-    - / – Home page
-    - /shop – Shop page
-    - /login – Login / Admin access
-    - Other routes depend on the current configuration in app.js.
-
-## 5. Project Structure
-
-```bash
-LandokmaiWeb/
-├─ backend/        # Node.js + Express server, routes, controllers
-├─ database/       # SQL scripts for creating and seeding MySQL database
-├─ html/           # Frontend pages (Home, Shop, Login, Cart, Blog, Admin, etc.)
-└─ README.md       # Project description
-
+Environment variables stored in `.env`:
+```env
+DB_HOST=localhost
+DB_USER=root
+DB_PASSWORD=your_password
+DB_NAME=LandokmaiDB
+PORT=3030
