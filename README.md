@@ -134,6 +134,32 @@ This project is built with:
 ---
 
 ## 4. Project Structure
+How to Run Locally
+
+This is a basic guide for running the project on a local machine.
+
+1.Clone the repository
+2.Install dependencies
+3.Set up MySQL database
+  -Create a database (e.g. LandokmaiDB).
+  -Run the SQL script(s) in the database/ folder to create tables and sample data.
+4.Configure environment variables
+ -Create a .env file in backend/ (example):
+  DB_HOST=localhost
+  DB_USER=root
+  DB_PASSWORD=your_password
+  DB_NAME=LandokmaiDB
+  PORT=3030
+5.Start the server
+6.Open the website
+  -Visit: http://localhost:3030
+  -Navigate to:
+    - / – Home page
+    - /shop – Shop page
+    - /login – Login / Admin access
+    - Other routes depend on the current configuration in app.js.
+
+## 5. Project Structure
 
 ```bash
 LandokmaiWeb/
@@ -141,3 +167,4 @@ LandokmaiWeb/
 ├─ database/       # SQL scripts for creating and seeding MySQL database
 ├─ html/           # Frontend pages (Home, Shop, Login, Cart, Blog, Admin, etc.)
 └─ README.md       # Project description
+
