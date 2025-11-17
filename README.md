@@ -8,19 +8,18 @@ The project is designed as a learning and portfolio project to demonstrate skill
 ## วิธีการติดตั้ง
 - **1.เปิด MySQL Workbench รันไฟล์ LandokmaiDB.sql และ LandokmaiDB_persist.sql**
 - **2.สร้างไฟล์ .env ในโฟลเดอร์โปรเจกต์ และกำหนดค่าตัวแปรต่อไปนี้:**
-- **PORT=3030
-- **DB_HOST=127.0.0.1
-- **DB_PORT=3306
-- **DB_USER=root
-- **DB_PASSWORD=<Your Password>
-- **DB_NAME=LandokmaiDB
+- PORT=3030
+- DB_HOST=127.0.0.1
+- DB_PORT=3306
+- DB_USER=root
+- DB_PASSWORD=<Your Password>
+- DB_NAME=LandokmaiDB
   
-- **SESSION_SECRET=landokmai-secret
-- **ADMIN_EMAIL=admin@landokmai.local
-- **ADMIN_PASSWORD=admin123
-- **ADMIN_FULLNAME=Administrator
-- **3.หลังติดตั้งเสร็จ ให้รันคำสั่ง**
--**    npm start
+- SESSION_SECRET=landokmai-secret
+- ADMIN_EMAIL=admin@landokmai.local
+- ADMIN_PASSWORD=admin123
+- ADMIN_FULLNAME=Administrator
+- **3.หลังติดตั้งเสร็จ ให้รันคำสั่ง** npm start
     
 ## 1. Overview
 
