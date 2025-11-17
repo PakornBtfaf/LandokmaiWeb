@@ -5,6 +5,10 @@ LandokmaiWeb is a full-stack web application for an online flower shop.
 The project is designed as a learning and portfolio project to demonstrate skills in **web development**, **backend APIs**, and **database design**.
 
 ---
+## วิธีการติดตั้ง
+1.เปิด MySQL Workbench รันไฟล์ LandokmaiDB.sql และ LandokmaiDB_persist.sql
+2.สร้างไฟล์ .env ในโฟลเดอร์โปรเจกต์ และกำหนดค่าตัวแปรต่อไปนี้
+
 
 ## 1. Overview
 
