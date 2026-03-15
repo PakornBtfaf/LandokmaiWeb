@@ -1,4 +1,3 @@
-
 const path = require('path');
 const fs = require('fs');
 const express = require('express');
@@ -45,7 +44,7 @@ async function initDB() {
     name_th VARCHAR(150) NOT NULL,
     name_en VARCHAR(150),
     price DECIMAL(10,2) NOT NULL DEFAULT 0,
-    image_url VARCHAR(500),
+    image_url MEDIUMTEXT,
     description TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     INDEX idx_name_th (name_th),
@@ -123,14 +122,20 @@ function requireAdmin(req, res, next) {
 }
 const genOrderNo = () => {
   const d = new Date();
-  return 'OD' + d.toISOString().slice(2,10).replace(/-/g,'') + '-' + Math.random().toString(36).slice(2,8).toUpperCase();
+  return 'OD' + d.toISOString().slice(2, 10).replace(/-/g, '') + '-' + Math.random().toString(36).slice(2, 8).toUpperCase();
 };
-// สร้าง slug ภาษาอังกฤษง่าย ๆ
-function slugify(s='') {
-  return s.toString().toLowerCase()
-    .normalize('NFKD').replace(/[^\w\s-]/g,'').trim()
-    .replace(/[\s_-]+/g,'-').replace(/^-+|-+$/g,'')
+
+// ✅ แก้แล้ว: slugify รองรับภาษาไทย + fallback กันว่าง
+function slugify(s = '') {
+  const str = s.toString().trim();
+  const slug = str
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^\u0E00-\u0E7Fa-z0-9-]/g, '')
+    .replace(/-+/g, '-')
+    .replace(/^-+|-+$/g, '')
     .slice(0, 200);
+  return slug || `post-${Date.now()}`;
 }
 
 // ===== PAGES =====
@@ -163,6 +168,7 @@ app.post('/api/auth/register', async (req, res) => {
     res.json({ message: 'ok', user: req.session.user });
   } catch (e) { console.error('register error', e); res.status(500).json({ message: 'server_error' }); }
 });
+
 app.post('/api/auth/login', async (req, res) => {
   try {
     const { email, password } = req.body || {};
@@ -178,7 +184,14 @@ app.post('/api/auth/login', async (req, res) => {
     res.json({ message: 'ok', user: req.session.user });
   } catch (e) { console.error('login error', e); res.status(500).json({ message: 'server_error' }); }
 });
+
 app.post('/api/auth/logout', (req, res) => req.session.destroy(() => res.json({ message: 'ok' })));
+
+// ===== SESSION CHECK =====
+app.get('/api/auth/me', (req, res) => {
+  if (!req.session.user) return res.status(401).json({ message: 'not_logged_in' });
+  res.json({ user: req.session.user });
+});
 
 // ===== FLOWERS (SEARCH + DETAIL) =====
 app.get('/api/flowers', async (req, res) => {
@@ -201,6 +214,7 @@ app.get('/api/flowers', async (req, res) => {
     res.json(rows);
   } catch (e) { console.error('flowers error', e); res.status(500).json({ message: 'server_error' }); }
 });
+
 app.get('/api/flowers/:id', async (req, res) => {
   try {
     const [rows] = await pool.query(
@@ -224,23 +238,41 @@ app.post('/api/admin/flowers', requireAdmin, async (req, res) => {
     res.json({ id: r.insertId, message: 'created' });
   } catch (e) { console.error('admin create flower error', e); res.status(500).json({ message: 'server_error' }); }
 });
-app.delete('/api/admin/flowers/:id', requireAdmin, async (req, res) => {
-  try { await pool.query('DELETE FROM flowers WHERE id=?', [Number(req.params.id)]); res.json({ message: 'deleted' }); }
-  catch (e) { console.error('admin delete flower error', e); res.status(500).json({ message: 'server_error' }); }
+
+app.put('/api/admin/flowers/:id', requireAdmin, async (req, res) => {
+  try {
+    const { name_th, name_en, price, image_url, description } = req.body || {};
+    if (!name_th || price == null) return res.status(400).json({ message: 'name_th & price required' });
+    await pool.query(
+      'UPDATE flowers SET name_th=?, name_en=?, price=?, image_url=?, description=? WHERE id=?',
+      [name_th, name_en || null, price, image_url || null, description || null, Number(req.params.id)]
+    );
+    res.json({ message: 'updated' });
+  } catch (e) { console.error('admin update flower error', e); res.status(500).json({ message: 'server_error' }); }
 });
 
-// ===== ORDERS ===== (ต้องล็อกอิน)
+app.delete('/api/admin/flowers/:id', requireAdmin, async (req, res) => {
+  try {
+    await pool.query('DELETE FROM flowers WHERE id=?', [Number(req.params.id)]);
+    res.json({ message: 'deleted' });
+  } catch (e) { console.error('admin delete flower error', e); res.status(500).json({ message: 'server_error' }); }
+});
+
+// ===== ORDERS =====
+// ✅ แก้แล้ว: ย้าย release ออกจาก early return + บันทึกลง DB ครบถ้วน
 app.post('/api/orders', requireLogin, async (req, res) => {
   const conn = await pool.getConnection();
   try {
     const { customer_name, customer_address, customer_phone, items } = req.body || {};
-    if (!customer_name || !customer_address || !customer_phone || !Array.isArray(items) || !items.length)
+    if (!customer_name || !customer_address || !customer_phone || !Array.isArray(items) || !items.length) {
+      conn.release();
       return res.status(400).json({ message: 'invalid_order' });
+    }
 
     const ids = items.map(i => Number(i.flower_id)).filter(Boolean);
     const [rows] = ids.length
-      ? await conn.query(`SELECT id, name_th, price FROM flowers WHERE id IN (${ids.map(()=>'?').join(',')})`, ids)
-      : [[],[]];
+      ? await conn.query(`SELECT id, name_th, price FROM flowers WHERE id IN (${ids.map(() => '?').join(',')})`, ids)
+      : [[]];
     const map = new Map(rows.map(r => [r.id, r]));
 
     let total = 0;
@@ -251,10 +283,15 @@ app.post('/api/orders', requireLogin, async (req, res) => {
       total += Number(f.price) * qty;
       return { flower_id: f.id, name_snap: f.name_th, price_snap: f.price, qty };
     }).filter(Boolean);
-    if (!normalized.length) return res.status(400).json({ message: 'no_valid_items' });
+
+    if (!normalized.length) {
+      conn.release();
+      return res.status(400).json({ message: 'no_valid_items' });
+    }
 
     await conn.beginTransaction();
     const orderNo = genOrderNo();
+
     const [r1] = await conn.query(
       `INSERT INTO orders (user_id, order_no, customer_name, customer_address, customer_phone, total_amount)
        VALUES (?, ?, ?, ?, ?, ?)`,
@@ -268,11 +305,78 @@ app.post('/api/orders', requireLogin, async (req, res) => {
         [orderId, it.flower_id, it.name_snap, it.price_snap, it.qty]
       );
     }
+
     await conn.commit();
     res.json({ message: 'ok', order_no: orderNo, order_id: orderId, total });
   } catch (e) {
-    await conn.rollback(); console.error('create order error', e); res.status(500).json({ message: 'server_error' });
-  } finally { conn.release(); }
+    await conn.rollback();
+    console.error('create order error', e);
+    res.status(500).json({ message: 'server_error' });
+  } finally {
+    conn.release();
+  }
+});
+
+// ✅ ใหม่: user ดูประวัติสั่งซื้อของตัวเอง
+app.get('/api/orders/mine', requireLogin, async (req, res) => {
+  try {
+    const [orders] = await pool.query(
+      `SELECT id, order_no, customer_name, customer_address, customer_phone, total_amount, created_at
+       FROM orders WHERE user_id = ? ORDER BY id DESC`,
+      [req.session.user.id]
+    );
+    if (!orders.length) return res.json([]);
+
+    const orderIds = orders.map(o => o.id);
+    const [orderItems] = await pool.query(
+      `SELECT order_id, name_snap, price_snap, qty
+       FROM order_items WHERE order_id IN (${orderIds.map(() => '?').join(',')})`,
+      orderIds
+    );
+
+    const itemMap = {};
+    orderItems.forEach(it => {
+      if (!itemMap[it.order_id]) itemMap[it.order_id] = [];
+      itemMap[it.order_id].push(it);
+    });
+
+    res.json(orders.map(o => ({ ...o, items: itemMap[o.id] || [] })));
+  } catch (e) {
+    console.error('get my orders error', e);
+    res.status(500).json({ message: 'server_error' });
+  }
+});
+
+// ✅ ใหม่: admin ดูออเดอร์ทั้งหมดพร้อม items
+app.get('/api/admin/orders', requireAdmin, async (req, res) => {
+  try {
+    const [orders] = await pool.query(
+      `SELECT o.id, o.order_no, o.customer_name, o.customer_phone, o.customer_address,
+              o.total_amount, o.created_at, u.email AS user_email
+       FROM orders o
+       LEFT JOIN users u ON u.id = o.user_id
+       ORDER BY o.id DESC LIMIT 100`
+    );
+    if (!orders.length) return res.json([]);
+
+    const orderIds = orders.map(o => o.id);
+    const [orderItems] = await pool.query(
+      `SELECT order_id, name_snap, price_snap, qty
+       FROM order_items WHERE order_id IN (${orderIds.map(() => '?').join(',')})`,
+      orderIds
+    );
+
+    const itemMap = {};
+    orderItems.forEach(it => {
+      if (!itemMap[it.order_id]) itemMap[it.order_id] = [];
+      itemMap[it.order_id].push(it);
+    });
+
+    res.json(orders.map(o => ({ ...o, items: itemMap[o.id] || [] })));
+  } catch (e) {
+    console.error('admin get orders error', e);
+    res.status(500).json({ message: 'server_error' });
+  }
 });
 
 // ===== BLOG: Public =====
@@ -288,6 +392,7 @@ app.get('/api/blogs', async (req, res) => {
     res.json(rows);
   } catch (e) { console.error('blogs list error', e); res.status(500).json({ message: 'server_error' }); }
 });
+
 app.get('/api/blogs/:slug', async (req, res) => {
   try {
     const [rows] = await pool.query(
@@ -307,8 +412,11 @@ app.post('/api/admin/blogs', requireAdmin, async (req, res) => {
   try {
     const { title, content, cover_url } = req.body || {};
     if (!title || !content) return res.status(400).json({ message: 'title & content required' });
+
+    // ✅ แก้แล้ว: slugify รองรับภาษาไทย + fallback กันว่าง
     let slug = slugify(title);
-    // กันชนกัน
+    if (!slug) slug = `post-${Date.now()}`;
+
     let s = slug, i = 1;
     while (true) {
       const [dup] = await pool.query('SELECT id FROM blog_posts WHERE slug=? LIMIT 1', [s]);
@@ -322,6 +430,7 @@ app.post('/api/admin/blogs', requireAdmin, async (req, res) => {
     res.json({ id: r.insertId, slug, message: 'created' });
   } catch (e) { console.error('admin create blog error', e); res.status(500).json({ message: 'server_error' }); }
 });
+
 app.put('/api/admin/blogs/:id', requireAdmin, async (req, res) => {
   try {
     const { title, content, cover_url } = req.body || {};
@@ -333,6 +442,7 @@ app.put('/api/admin/blogs/:id', requireAdmin, async (req, res) => {
     res.json({ message: 'updated' });
   } catch (e) { console.error('admin update blog error', e); res.status(500).json({ message: 'server_error' }); }
 });
+
 app.delete('/api/admin/blogs/:id', requireAdmin, async (req, res) => {
   try {
     await pool.query('DELETE FROM blog_posts WHERE id=?', [Number(req.params.id)]);
